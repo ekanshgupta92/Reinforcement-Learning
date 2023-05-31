@@ -1,10 +1,6 @@
 # Reinforcement-Learning
 Notes for understanding the concepts of Reinforment learninf along with code implementations of the different algorithms I came across while following the nanodegree resources. 
 
-Different Algorithms to solve an RL problem:
-
-<img src='Image/RL_algorithms.png' width="700">
-
 
 #### References:
 * [Deep Reinforcement Learning Online Course | Udacity](https://www.udacity.com/course/deep-reinforcement-learning-nanodegree--nd893)
@@ -16,3 +12,5 @@ Different Algorithms to solve an RL problem:
 * [Practical Deep Reinforcement Learning with Python book](https://bpbonline.com/products/practical-deep-reinforcement-learning-with-python?variant=42060916818120)
 
 * [RL Book | Sutton & Barto](http://incompleteideas.net/book/RLbook2020.pdf)
+
+>Note: Some images may not get rendered in the github preview of the notebook.
