@@ -110,7 +110,7 @@ class Agent():
         for target_param, local_param in zip(target_model.parameters(), local_model.parameters()):
             target_param.data.copy_(tau*local_param.data + (1.0-tau)*target_param.data)
         
-    def act(self, state, eps):
+    def act(self, state, eps=0.8):
         state = torch.from_numpy(state).float().unsqueeze(0).to(device)
         self.qnetwork_local.eval()
         with torch.no_grad():
@@ -146,15 +146,20 @@ def dqn(agent, env, n_episodes=2000, max_t=1000, eps_start=1.0, eps_end=0.01, ep
         print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_window)), end="")
         if i_episode % 100 == 0:
             print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_window)))
-        if np.mean(scores_window)>=200.0: # solved 
+            torch.save(agent.qnetwork_local.state_dict(), 'dqn.pth')
+        if np.mean(scores_window) >= -100.0: # solved 
             print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(i_episode-100, np.mean(scores_window)))
-            torch.save(agent.qnetwork_local.state_dict(), 'checkpoint.pth')
+            torch.save(agent.qnetwork_local.state_dict(), 'dqn.pth')
             break
     return scores
 
 if __name__ == "__main__":
-    agent = Agent(state_size=8, action_size=4)
-    env = gym.make('LunarLander-v2')
+    """
+    Change the env name, works for all envs with a discrete action space. Also change the reward in dqn function
+    along with the 
+    """
+    env = gym.make("Acrobot-v1")
+    agent = Agent(state_size=env.observation_space.shape[0], action_size=env.action_space.n)
     scores = dqn(agent, env)
 
     # plot the scores
@@ -167,7 +172,7 @@ if __name__ == "__main__":
 
 
     # load the weights from file
-    agent.qnetwork_local.load_state_dict(torch.load('checkpoint.pth'))
+    agent.qnetwork_local.load_state_dict(torch.load('dqn.pth'))
 
     for i in range(3):
         state = env.reset()
