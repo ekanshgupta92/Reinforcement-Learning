@@ -1,5 +1,8 @@
 """
-Double DQN for solving atari games. 
+Double DQN for solving atari games: 
+    Q(s_t, a_t) = r_t + gamma * np.max(Q^{target} (s_{t+1}, argmax_{a} Q^{local} (s_{t+1}, a)[1] )) 
+                                                                [1] : ie get the action with max Q^{local} value
+
 
 We use two Q networks as training and updating one is highly unstable. So we slowly keep updating the target
 network to train a local network.
@@ -26,6 +29,8 @@ GAMMA = 0.99            # discount factor
 TAU = 1e-3              # for soft update of target parameters
 LR = 5e-4               # learning rate 
 UPDATE_EVERY = 4        # how often to update the network
+
+DOUBLE = False
 
 device = torch.device("mps" if torch.has_mps else "cpu")
 
@@ -98,7 +103,11 @@ class Agent():
     def learn(self, experiences, gamma): 
         state, action, reward, next_state, done = experiences
 
-        Q_target_next = self.qnetwork_target(next_state).detach().max(1)[0].unsqueeze(1) # get q value of s+1 state
+        if DOUBLE:
+            next_state_actions = self.qnetwork_local(next_state).max(1)[1] 
+            Q_target_next = self.qnetwork_target(next_state).gather(1, next_state_actions.unsqueeze(1))
+        else:
+            Q_target_next = self.qnetwork_target(next_state).detach().max(1)[0].unsqueeze(1) # get q value of s+1 state
         Q_targets = reward + (gamma * Q_target_next * (1 - done)) # r + gamma * Q(s+1, a)
         Q_expected = self.qnetwork_local(state).gather(1, action) # get the Q(s,a) using local network ie to train
         ## gather() helps to get the q value corresponding to the chosen aciton.
