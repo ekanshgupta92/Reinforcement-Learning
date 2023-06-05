@@ -136,7 +136,7 @@ def train_step(optimizer, net, batch_noise, batch_reward,
         m_updates.append(torch.norm(update))
     writer.add_scalar("update_l2", np.mean(m_updates), step_idx)
     optimizer.step()
-
+    torch.save(net.state_dict(), 'half-cheetah.pth')
 
 def worker_func(worker_id, params_queue, rewards_queue,
                 device, noise_std):
