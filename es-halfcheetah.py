@@ -179,10 +179,7 @@ if __name__ == "__main__":
     net = Net(env.observation_space.shape[0], env.action_space.shape[0])
     print(net)
 
-    params_queues = [
-        mp.Queue(maxsize=1)
-        for _ in range(PROCESSES_COUNT)
-    ]
+    params_queues = [mp.Queue(maxsize=1) for _ in range(PROCESSES_COUNT)]
     rewards_queue = mp.Queue(maxsize=ITERS_PER_UPDATE)
     workers = []
 
